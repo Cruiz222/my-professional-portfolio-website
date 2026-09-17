@@ -1,14 +1,22 @@
 import './App.css'
+import Header from './components/Header'
+import About from './components/About'
 
 function App() {
 
   return (
-    <div>
-      <main>John Abah</main>
-      <h1>Software/AI Engineer</h1>
+    <main>
 
-      <p>I am learning AI and software engineering</p>
-    </div>
+      <Header />
+
+      <About />
+      
+      <section id="projects">
+        <h2>My Projects</h2>
+
+         <p>These are the projects i've worked on and built</p>
+      </section>
+    </main>
            
   )
 }
