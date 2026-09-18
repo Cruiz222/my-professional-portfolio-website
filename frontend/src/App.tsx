@@ -1,6 +1,7 @@
 import './App.css'
 import Header from './components/Header'
 import About from './components/About'
+import Projects from './components/Projects'
 
 function App() {
 
@@ -11,11 +12,7 @@ function App() {
 
       <About />
       
-      <section id="projects">
-        <h2>My Projects</h2>
-
-         <p>These are the projects i've worked on and built</p>
-      </section>
+      <Projects title="My Projects" />
     </main>
            
   )
