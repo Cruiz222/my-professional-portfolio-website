@@ -2,6 +2,7 @@ import './App.css'
 import Header from './components/Header'
 import About from './components/About'
 import Projects from './components/Projects'
+import UpdateTitle from './components/ProjectForm'
 
 function App() {
 
@@ -13,6 +14,8 @@ function App() {
       <About />
       
       <Projects title="My Projects" />
+
+      <UpdateTitle />
     </main>
            
   )
