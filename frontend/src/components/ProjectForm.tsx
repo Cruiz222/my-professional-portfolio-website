@@ -1,36 +1,64 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import ProjectCard from "./ProjectCard";
-import type { Project } from "./ProjectCard";
+import { categories, contributions, parseProjects } from "../data/projects";
+import type { Project } from "../data/projects";
 
-function ProjectForm() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [preview, setPreview] = useState<Project | null>(null);
+interface Props {
+  project: Project | null;
+  saving: boolean;
+  onSave: (project: Project) => Promise<boolean>;
+  onCancel: () => void;
+}
+
+function ProjectForm({ project, saving, onSave, onCancel }: Props) {
+  const [title, setTitle] = useState(project?.title ?? "");
+  const [description, setDescription] = useState(project?.description ?? "");
+  const [technologies, setTechnologies] = useState(
+    project?.technologies.join(", ") ?? "",
+  );
+  const [category, setCategory] = useState<Project["category"]>(
+    project?.category ?? "Software",
+  );
+  const [contribution, setContribution] = useState<Project["contribution"]>(
+    project?.contribution ?? "Personal project",
+  );
+  const [repositoryUrl, setRepositoryUrl] = useState(
+    project?.repositoryUrl ?? "",
+  );
+  const [demoUrl, setDemoUrl] = useState(project?.demoUrl ?? "");
   const [error, setError] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!title.trim() || !description.trim()) {
-      setError(
-        "Please enter a title and description with more than just spaces.",
-      );
-      return;
-    }
     setError("");
-    setPreview({
-      id: 4,
-      title: title.trim(),
-      description: description.trim(),
-      technologies: [],
-      category: "Software",
-      contribution: "Local preview",
-    });
+    try {
+      const [entry] = parseProjects([
+        {
+          id: project?.id ?? crypto.randomUUID(),
+          title,
+          description,
+          category,
+          contribution,
+          technologies: technologies
+            .split(",")
+            .map((value) => value.trim())
+            .filter(Boolean),
+          repositoryUrl,
+          demoUrl,
+        },
+      ]);
+      await onSave(entry);
+    } catch (reason) {
+      setError(
+        reason instanceof Error ? reason.message : "Check the project fields.",
+      );
+    }
   }
 
   return (
-    <div className="preview-layout">
-      <form onSubmit={handleSubmit}>
+    <form className="project-editor" onSubmit={handleSubmit}>
+      <h2>{project ? "Edit project" : "Add project"}</h2>
+      <fieldset disabled={saving}>
         <label htmlFor="project-title">Project title</label>
         <input
           id="project-title"
@@ -38,58 +66,78 @@ function ProjectForm() {
           maxLength={80}
           required
           onChange={(event) => setTitle(event.target.value)}
-          placeholder="What are you building?"
         />
         <label htmlFor="project-description">Description</label>
         <textarea
           id="project-description"
           value={description}
-          maxLength={400}
+          maxLength={1000}
           required
-          rows={4}
+          rows={5}
           onChange={(event) => setDescription(event.target.value)}
-          placeholder="Describe the problem your project solves."
         />
-        <p role="alert" className="form-error">
+        <label htmlFor="project-category">Category</label>
+        <select
+          id="project-category"
+          value={category}
+          onChange={(event) =>
+            setCategory(event.target.value as Project["category"])
+          }
+        >
+          {categories.map((value) => (
+            <option key={value}>{value}</option>
+          ))}
+        </select>
+        <label htmlFor="project-contribution">Contribution</label>
+        <select
+          id="project-contribution"
+          value={contribution}
+          onChange={(event) =>
+            setContribution(event.target.value as Project["contribution"])
+          }
+        >
+          {contributions.map((value) => (
+            <option key={value}>{value}</option>
+          ))}
+        </select>
+        <label htmlFor="project-technologies">
+          Technologies (comma-separated, optional)
+        </label>
+        <input
+          id="project-technologies"
+          value={technologies}
+          maxLength={820}
+          onChange={(event) => setTechnologies(event.target.value)}
+        />
+        <label htmlFor="project-repository">Repository URL (optional)</label>
+        <input
+          id="project-repository"
+          type="url"
+          value={repositoryUrl}
+          maxLength={2048}
+          onChange={(event) => setRepositoryUrl(event.target.value)}
+        />
+        <label htmlFor="project-demo">Live demo URL (optional)</label>
+        <input
+          id="project-demo"
+          type="url"
+          value={demoUrl}
+          maxLength={2048}
+          onChange={(event) => setDemoUrl(event.target.value)}
+        />
+        <p className="form-error" role="alert">
           {error}
         </p>
         <div className="form-actions">
           <button className="button primary" type="submit">
-            Preview project →
+            {saving ? "Saving…" : "Save project"}
           </button>
-          <button
-            className="button"
-            type="button"
-            onClick={() => {
-              setTitle("");
-              setDescription("");
-              setPreview(null);
-              setError("");
-            }}
-          >
-            Reset
+          <button className="button" type="button" onClick={onCancel}>
+            Cancel
           </button>
         </div>
-      </form>
-      <div>
-        <p className="sr-only" role="status">
-          {preview
-            ? `Preview updated: ${preview.title}`
-            : "No project preview yet"}
-        </p>
-        {preview ? (
-          <ul className="preview-card">
-            <ProjectCard project={preview} />
-          </ul>
-        ) : (
-          <div className="preview-placeholder">
-            <span aria-hidden="true">+</span>
-            <p>Your next idea starts here.</p>
-            <small>Fill out the form to preview a project card.</small>
-          </div>
-        )}
-      </div>
-    </div>
+      </fieldset>
+    </form>
   );
 }
 

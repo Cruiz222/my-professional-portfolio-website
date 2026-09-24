@@ -2,9 +2,33 @@ import "./App.css";
 import Header from "./components/Header";
 import About from "./components/About";
 import Projects from "./components/Projects";
-import ProjectForm from "./components/ProjectForm";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { useProjects } from "./data/useProjects";
+const ProjectManager = import.meta.env.DEV
+  ? lazy(() => import("./components/ProjectManager"))
+  : null;
 
 function App() {
+  const { projects, loading, error } = useProjects();
+  const [hash, setHash] = useState(window.location.hash);
+  useEffect(() => {
+    const update = () => setHash(window.location.hash);
+    window.addEventListener("hashchange", update);
+    return () => window.removeEventListener("hashchange", update);
+  }, []);
+  if (ProjectManager && hash === "#manage-projects") {
+    return (
+      <Suspense
+        fallback={
+          <main>
+            <p role="status">Loading project manager…</p>
+          </main>
+        }
+      >
+        <ProjectManager />
+      </Suspense>
+    );
+  }
   return (
     <>
       <a className="skip-link" href="#main">
@@ -13,7 +37,12 @@ function App() {
       <Header />
       <main id="main">
         <About />
-        <Projects title="Selected projects" />
+        <Projects
+          title="Selected projects"
+          projects={projects}
+          loading={loading}
+          error={error}
+        />
         <section id="skills" className="section">
           <p className="eyebrow">02 / Skills & direction</p>
           <h2>A foundation built through practice.</h2>
@@ -21,14 +50,7 @@ function App() {
             <article>
               <span className="card-number">01</span>
               <h3>Software engineering</h3>
-              <p>Technologies represented in my projects.</p>
-              <ul className="tags">
-                {["Python", "TypeScript", "React", "FastAPI", "SQLite"].map(
-                  (skill) => (
-                    <li key={skill}>{skill}</li>
-                  ),
-                )}
-              </ul>
+              <p>Building practical skills through software projects.</p>
             </article>
             <article>
               <span className="card-number">02</span>
@@ -87,17 +109,8 @@ function App() {
             </article>
           </div>
         </section>
-        <section className="section playground" aria-labelledby="lab-title">
-          <p className="eyebrow">04 / Interactive lab</p>
-          <h2 id="lab-title">Try a project preview.</h2>
-          <p>
-            A small experiment in React state. Draft a project card below; this
-            preview stays on this page and is not published or saved.
-          </p>
-          <ProjectForm />
-        </section>
         <section id="contact" className="section contact">
-          <p className="eyebrow">05 / Contact</p>
+          <p className="eyebrow">04 / Contact</p>
           <h2>
             Good work starts
             <br />
@@ -120,6 +133,7 @@ function App() {
           JA<span>.</span>
         </a>
         <p>John Abah · Built with curiosity and care.</p>
+        {import.meta.env.DEV && <a href="#manage-projects">Owner login</a>}
         <a href="#about">Back to top ↑</a>
       </footer>
     </>

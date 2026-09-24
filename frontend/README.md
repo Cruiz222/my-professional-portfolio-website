@@ -1,6 +1,6 @@
 # John Abah — portfolio frontend
 
-React and TypeScript frontend built on the original Header, About, Projects, ProjectCard, and ProjectForm components.
+React and TypeScript portfolio with file-backed project content. No sample projects are published.
 
 ## Run locally
 
@@ -12,33 +12,55 @@ npm ci
 npm run dev
 ```
 
-`npm run build` checks TypeScript and creates `dist/`. `npm run lint` runs Oxlint. `npm run preview` serves a production build locally.
+Open the localhost address printed by Vite. `npm run build` creates the production site in `dist/`; `npm run lint` and `npm test` check the code and project persistence.
 
-## Content and components
+## Owner access setup
 
-- `src/components/About.tsx`: introduction and engineering direction.
-- `src/components/Projects.tsx`: existing project data and category filtering.
-- `src/components/ProjectCard.tsx`: shared Project type and card presentation.
-- `src/components/ProjectForm.tsx`: local project preview exercise.
-- `src/App.tsx`: skills, journey, certification placeholder, and contact placeholder.
-- `src/index.css` and `src/App.css`: global and responsive component styling.
+Before editing, run this in your own terminal:
 
-Existing project titles and technologies are retained. AI and cybersecurity are described as learning directions. Add only earned credentials and real contact/profile links. There is no backend, contact submission, authentication, or project publishing yet.
+```sh
+cd frontend
+npm run owner:setup
+```
 
-## How the React exercise works
+Choose a private password of at least 12 characters and confirm it. Input is hidden. The command writes only a salted scrypt hash to the git-ignored `frontend/.env.local`, with file permissions restricted to your OS account. Do not use a `VITE_` prefix for the credential: those variables are public frontend configuration.
 
-Projects owns the selected category in state and derives the visible list with `filter`. ProjectCard receives a typed project through props. ProjectForm keeps editable fields separate from the submitted preview, so typing does not change the preview until submission. Reset clears both. Reloading discards the preview.
+Restart the dev server after setup. Open `http://localhost:5173/#manage-projects` and sign in. There is no default password, public registration, or password setup web endpoint. Without valid server-side credentials, editing is disabled.
 
-Required fields, length limits, and trimming reject empty drafts. React renders the text without interpreting it as HTML. Any future API must independently validate input; browser validation is not a server security boundary.
+Owner sessions use a random token in an HttpOnly, SameSite=Strict cookie, expire after one hour, and are invalidated on logout or server restart. Five login attempts within 15 minutes trigger a temporary limit. Sign out when done. To change or recover the password, rerun the setup command and restart the server; this also invalidates prior sessions.
 
-Learning exercise: explain why `preview` is separate from `title` and `description`, then add a technology input that splits comma-separated values, trims whitespace, and removes duplicates.
+Anyone with access to your OS account or repository files remains trusted and can modify the files directly. This owner login protects the web editor; it does not replace operating-system access controls.
 
-## Manual checks
+## Manage projects
 
-- Navigate to each section with the header and keyboard; verify visible focus and the skip link.
-- Select Software (three projects), AI (empty state), then View all projects.
-- Submit a draft, edit it without submitting, submit again, and reset.
-- Try whitespace-only input and HTML-like text; the former should fail and the latter should display as text.
-- Check narrow mobile and desktop layouts for horizontal overflow.
+1. Click **Owner login** in the footer of the local development website, or open `http://localhost:5173/#manage-projects`.
+2. Sign in with your owner password, then choose **Add project**, fill in your details, and click **Save project**.
+3. Use **Edit** to update a project or **Delete**, then **Confirm deletion**, to remove it.
+4. Return to the portfolio. The list reads the saved content; an already-open tab updates on focus or within 15 seconds while visible.
 
-Hosting configuration, HTTPS, security headers, and abuse prevention for any future contact API remain deployment/backend work.
+Projects are saved to `public/projects.json`, not browser storage. Restarting the dev server or switching browsers retains saved content. You can also edit that JSON file manually. Keep project IDs unique; the editor generates IDs automatically. The file starts with an empty array.
+
+**Publishing:** commit the changed content file, build, and deploy to update a hosted website. A static deployment serves the saved content to every visitor, but cannot accept edits through this manager. The manager is available only during local development, using localhost on the same computer as Vite. A protected backend or CMS is needed for editing directly on a hosted website.
+
+Do not put secrets or private data in project content: it is public.
+
+## How it works
+
+- `src/data/projects.ts` defines the Project shape and validates both frontend and server input.
+- `src/data/useProjects.ts` loads published JSON and refreshes it on focus and periodically.
+- `src/components/Projects.tsx` filters the supplied project list.
+- `src/components/ProjectCard.tsx` renders project text and optional HTTP/HTTPS links.
+- `src/components/ProjectManager.tsx` coordinates additions, edits, deletion, and save status.
+- `src/components/ProjectForm.tsx` holds editable fields until Save is clicked.
+- `server/projects-api.ts` writes validated content atomically. Revision checks prevent one editor from silently overwriting another editor's work.
+- `vite.config.ts` mounts the editing endpoint only in the development server. It is absent from the production build and preview server.
+
+The write endpoint checks loopback connections, the Host and Origin headers, JSON content type, body size, and content validity. Every management read and write additionally requires a valid owner session. This remains a localhost-only authoring tool; the static production website has no editing API or login endpoint. The cookie uses local HTTP in this workflow. Any future hosted editing backend must use HTTPS and Secure cookies. Public visitors cannot publish content. Failed saves keep the form available and show an error. A conflict requires reloading the manager before retrying; copy any unsaved changes first.
+
+Learning exercise: trace a field from form state through validation, the save request, the JSON file, and the public project list. Explain why saving only React state would lose content on reload.
+
+## Verification
+
+`npm test` covers validation, persistent add/edit/delete operations, invalid and unsafe input, origin/host restrictions, concurrent-edit conflicts, unauthenticated/forged-session rejection, login rate limits, logout, and session expiry. Tests use temporary files and never modify your portfolio content.
+
+Browser checks: add a project, edit it, reload, cancel and confirm deletion, filter categories, and test keyboard navigation and mobile layouts. Contact functionality, real profile links, and earned credentials remain separate work.

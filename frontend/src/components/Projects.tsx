@@ -1,36 +1,7 @@
 import { useState } from "react";
 import ProjectCard from "./ProjectCard";
-import type { Project, ProjectCategory } from "./ProjectCard";
+import type { Project, ProjectCategory } from "../data/projects";
 
-const projects: Project[] = [
-  {
-    id: 1,
-    title: "Budget Manager",
-    description:
-      "A budget and finance manager for organizing personal finances.",
-    technologies: ["Python", "FastAPI", "SQLite"],
-    category: "Software",
-    contribution: "Personal project",
-  },
-  {
-    id: 2,
-    title: "Maco Industries sales tracker",
-    description:
-      "A sales tracking application for clearer company records and organized reporting.",
-    technologies: ["Python", "React", "SQLite"],
-    category: "Software",
-    contribution: "Contributed project",
-  },
-  {
-    id: 3,
-    title: "Lily online shopping store",
-    description:
-      "An e-commerce storefront for presenting and selling goods online.",
-    technologies: ["Python", "TypeScript", "SQLite"],
-    category: "Software",
-    contribution: "Contributed project",
-  },
-];
 const categories: ("All" | ProjectCategory)[] = [
   "All",
   "Software",
@@ -40,7 +11,17 @@ const categories: ("All" | ProjectCategory)[] = [
   "Automation",
 ];
 
-function Projects({ title }: { title: string }) {
+function Projects({
+  title,
+  projects,
+  loading,
+  error,
+}: {
+  title: string;
+  projects: Project[];
+  loading: boolean;
+  error: string;
+}) {
   const [category, setCategory] = useState<(typeof categories)[number]>("All");
   const visibleProjects = projects.filter(
     (project) => category === "All" || project.category === category,
@@ -78,7 +59,11 @@ function Projects({ title }: { title: string }) {
       <p className="sr-only" role="status">
         {visibleProjects.length} projects shown
       </p>
-      {visibleProjects.length ? (
+      {loading ? (
+        <p role="status">Loading projects…</p>
+      ) : error ? (
+        <p role="alert">{error}</p>
+      ) : visibleProjects.length ? (
         <ul className="project-grid">
           {visibleProjects.map((project) => (
             <ProjectCard key={project.id} project={project} />
@@ -87,10 +72,16 @@ function Projects({ title }: { title: string }) {
       ) : (
         <div className="empty-state">
           <h3>More to build. More to share.</h3>
-          <p>No {category} projects have been added yet.</p>
-          <button className="button" onClick={() => setCategory("All")}>
-            View all projects
-          </button>
+          <p>
+            {projects.length === 0
+              ? "No projects have been published yet."
+              : `No ${category} projects have been added yet.`}
+          </p>
+          {category !== "All" && (
+            <button className="button" onClick={() => setCategory("All")}>
+              View all projects
+            </button>
+          )}
         </div>
       )}
     </section>

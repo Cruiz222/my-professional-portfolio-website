@@ -1,26 +1,10 @@
-export type ProjectCategory =
-  | "Software"
-  | "AI"
-  | "Cybersecurity"
-  | "AI Security"
-  | "Automation";
-
-export interface Project {
-  id: number;
-  title: string;
-  description: string;
-  technologies: string[];
-  category: ProjectCategory;
-  contribution: "Personal project" | "Contributed project" | "Local preview";
-}
+import type { Project } from "../data/projects";
 
 function ProjectCard({ project }: { project: Project }) {
   return (
     <li className="project-card">
       <div className="project-visual" aria-hidden="true">
-        <span className="project-code">
-          {String(project.id).padStart(2, "0")} / {project.category}
-        </span>
+        <span className="project-code">{project.category}</span>
         <span className="project-glyph">
           {project.title.slice(0, 1).toUpperCase()}
           <span>↗</span>
@@ -38,6 +22,28 @@ function ProjectCard({ project }: { project: Project }) {
             <li key={technology}>{technology}</li>
           ))}
         </ul>
+        <div className="project-links">
+          {project.repositoryUrl && (
+            <a
+              className="text-link"
+              href={project.repositoryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Repository ↗
+            </a>
+          )}
+          {project.demoUrl && (
+            <a
+              className="text-link"
+              href={project.demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Live demo ↗
+            </a>
+          )}
+        </div>
       </div>
     </li>
   );
