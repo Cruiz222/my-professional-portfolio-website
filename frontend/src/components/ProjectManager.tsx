@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ProfileEditor from "./ProfileEditor";
 import ProjectForm from "./ProjectForm";
 import OwnerAccess from "./OwnerAccess";
 import { parseProjects } from "../data/projects";
@@ -90,7 +91,9 @@ function ProjectEditor() {
         ← Back to portfolio
       </a>
       <p className="eyebrow">Portfolio content</p>
-      <h1>Manage projects</h1>
+      <h1>Your portfolio studio</h1>
+      <nav className="studio-navigation" aria-label="Dashboard sections"><button type="button" className="button" onClick={() => document.getElementById("manage-images")?.scrollIntoView()}>Profile & background pictures ↓</button><button type="button" className="button" onClick={() => document.getElementById("manage-work")?.scrollIntoView()}>Projects & project pictures ↓</button></nav>
+      <ProfileEditor />
       <p>
         Add your own work. Saves update the local website and persist after
         restarting. Deploy the updated content to publish it on your hosted
@@ -105,7 +108,7 @@ function ProjectEditor() {
       ) : (
         revision && (
           <>
-            <div className="manager-toolbar">
+            <div id="manage-work" className="manager-toolbar">
               <span>{projects.length} projects</span>
               <button
                 className="button primary"
@@ -115,7 +118,7 @@ function ProjectEditor() {
                   setDeleting(null);
                 }}
               >
-                Add project
+                Add project & pictures
               </button>
             </div>
             {editing !== undefined && (

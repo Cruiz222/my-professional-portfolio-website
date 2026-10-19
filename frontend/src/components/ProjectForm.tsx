@@ -27,6 +27,7 @@ function ProjectForm({ project, saving, onSave, onCancel }: Props) {
     project?.repositoryUrl ?? "",
   );
   const [demoUrl, setDemoUrl] = useState(project?.demoUrl ?? "");
+  const [preparingImages, setPreparingImages] = useState(false);
   const [images, setImages] = useState<string[]>(project?.images ?? []);
   const [error, setError] = useState("");
 
@@ -62,7 +63,7 @@ function ProjectForm({ project, saving, onSave, onCancel }: Props) {
     <form className="project-editor" onSubmit={handleSubmit}>
       <h2>{project ? "Edit project" : "Add project"}</h2>
       <fieldset disabled={saving}>
-        <ImagePicker images={images} onChange={setImages} multiple />
+        <ImagePicker label="Upload project pictures (up to six; first is the cover)" images={images} onChange={setImages} onBusy={setPreparingImages} multiple />
         <label htmlFor="project-title">Project title</label>
         <input
           id="project-title"
@@ -134,7 +135,7 @@ function ProjectForm({ project, saving, onSave, onCancel }: Props) {
           {error}
         </p>
         <div className="form-actions">
-          <button className="button primary" type="submit">
+          <button className="button primary" type="submit" disabled={preparingImages}>
             {saving ? "Saving…" : "Save project"}
           </button>
           <button className="button" type="button" onClick={onCancel}>

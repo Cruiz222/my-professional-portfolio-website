@@ -273,3 +273,10 @@ test("technology field accepts long names and more than twenty entries", () => {
  const technologies = Array.from({length: 45}, (_, i) => `Custom technology ${i} ${"x".repeat(100)}`);
  assert.deepEqual(parseProjects([{...project, technologies}])[0].technologies, technologies);
 });
+
+test("profile and background images are independent and old profiles remain valid", () => {
+ const image = "data:image/jpeg;base64,/9j/";
+ assert.deepEqual(parseProfile({image, backgroundImage:"/profile.png"}), {image, backgroundImage:"/profile.png"});
+ assert.deepEqual(parseProfile({image}), {image});
+ assert.throws(() => parseProfile({image, backgroundImage:"javascript:alert(1)"}));
+});

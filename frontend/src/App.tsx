@@ -120,19 +120,19 @@ function App() {
             Interested in software engineering, AI, and cybersecurity
             collaborations.
           </p>
-          <p>
-            Professional contact details and profile links will be added soon.
-          </p>
-          <a className="text-link" href="#projects">
-            Explore my work ↗
-          </a>
+          <div className="contact-actions">
+            <a className="button primary" href="mailto:destainlex5050@gmail.com">Email me ↗</a>
+            <a className="button" href="https://www.linkedin.com/in/cruiztech" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+            <a className="button" href="https://github.com/Cruiz222" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          </div>
+          <a className="contact-email" href="mailto:destainlex5050@gmail.com">destainlex5050@gmail.com</a>
         </section>
       </main>
       <footer>
         <a className="brand" href="#about">
-          JA<span>.</span>
+          Cruiz<span>Tech.</span>
         </a>
-        <p>John Abah · Built with curiosity and care.</p>
+        <p>CruizTech · John Abah · Built with curiosity and care.</p>
         <a href="#about">Back to top ↑</a>
       </footer>
     </>

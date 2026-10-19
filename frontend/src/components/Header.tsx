@@ -1,8 +1,8 @@
 function Header() {
   return (
     <header className="site-header">
-      <a className="brand" href="#about" aria-label="John Abah home">
-        JA<span>.</span>
+      <a className="brand" href="#about" aria-label="CruizTech — John Abah home">
+        Cruiz<span>Tech.</span>
       </a>
       <nav aria-label="Main navigation">
         <a href="#about">About</a>

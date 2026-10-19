@@ -111,7 +111,8 @@ export function parseImages(value: unknown): string[] {
   if (!Array.isArray(value) || value.length > 6) throw new Error("Use at most six project images.");
   return value.map(parseImage);
 }
-export function parseProfile(value: unknown): { image: string } {
+export function parseProfile(value: unknown): { image: string; backgroundImage?: string } {
   if (!value || typeof value !== "object") throw new Error("Invalid profile.");
-  return { image: parseImage((value as { image: unknown }).image) };
+  const row = value as { image: unknown; backgroundImage?: unknown };
+  return { image: parseImage(row.image), ...(row.backgroundImage !== undefined ? {backgroundImage: parseImage(row.backgroundImage)} : {}) };
 }

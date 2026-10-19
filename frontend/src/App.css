@@ -748,3 +748,35 @@ fieldset { min-width: 0; }
 .project-count, .section-heading > div > p, .hero-bottom { color: #b4c5d8; }
 .tags li { overflow-wrap: anywhere; max-width: 100%; }
 .visual-caption { overflow-wrap: anywhere; }
+
+/* CruizTech brand and final publishing polish */
+.brand { font-size: clamp(22px, 3vw, 28px); letter-spacing: -.055em; white-space: nowrap; }
+.contact-actions { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 30px; }
+.contact-email { display: inline-block; margin-top: 22px; color: #c2d0df; overflow-wrap: anywhere; }
+.contact-email:hover { color: #7ce9d6; }
+.project-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); align-items: start; }
+.project-card { max-width: 720px; width: 100%; }
+.project-visual { overflow: hidden; position: relative; }
+.project-code, .project-glyph { color: #9ceadd; }
+.visual-caption { display: block; color: #b4c5d8; font-size: 11px; }
+.technology-details { margin-top: 22px; padding-top: 14px; border-top: 1px solid #35506a; }
+.technology-details summary { cursor: pointer; color: #8ee6d6; font-size: 13px; padding-block: 8px; }
+.technology-details summary:focus-visible, .project-gallery:focus-visible, select:focus-visible { outline: 3px solid #68dfcf; outline-offset: 4px; }
+.technology-details .tags { margin-top: 12px; }
+.technology-details .tags li { white-space: pre-wrap; font-size: 12px; line-height: 1.65; padding: 8px 12px; }
+.project-body > p:not(.eyebrow) { white-space: pre-line; font-size: 15px; }
+.project-links { flex-wrap: wrap; gap: 20px; }
+@media (max-width: 700px) {
+ .site-header { height: auto; min-height: 100px; flex-wrap: wrap; padding-block: 20px; gap: 16px; }
+ .site-header nav { flex-wrap: wrap; gap: 14px; font-size: 13px; }
+ .hero { gap: 30px; }
+ footer { flex-wrap: wrap; }
+ .contact-actions { align-items: stretch; }
+ .contact-actions .button { flex: 1 1 140px; }
+}
+
+.studio-navigation { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.image-settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-block: 24px; }
+.image-settings-grid > section { border: 1px solid #35506a; border-radius: 12px; padding: 20px; }
+.profile-editor fieldset { border: 0; padding: 0; margin: 0; }
+@media (max-width: 700px) { .image-settings-grid { grid-template-columns: 1fr; } }
