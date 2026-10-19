@@ -125,11 +125,9 @@ export default function OwnerAccess({ children }: { children: ReactNode }) {
       </p>
       {configured === false ? (
         <div className="empty-state">
-          <h2>Set up your owner password</h2>
+          <h2>Owner setup required</h2>
           <p>
-            In your terminal, open the frontend directory and run{" "}
-            <code>npm run owner:setup</code>. Then restart the development
-            server and refresh this page.
+            {import.meta.env.DEV ? <>In your terminal, open the frontend directory and run <code>npm run owner:setup</code>. Then restart the development server.</> : <>The online admin backend needs configuration. Follow <code>HOSTED-ADMIN.md</code> in your project to set up the database and Vercel environment variables.</>}
           </p>
           <p>Editing stays locked until setup is complete.</p>
         </div>

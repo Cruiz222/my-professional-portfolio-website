@@ -17,7 +17,14 @@ export default function ImagePicker({images, onChange, multiple = false, label, 
         ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height); bitmap.close();
         const image = canvas.toDataURL("image/jpeg", .78);
         if (image.length > 700000) throw new Error("This image is too detailed. Choose a smaller image.");
-        results.push(image);
+        if (import.meta.env.DEV) results.push(image);
+        else {
+          const response = await fetch("/api/media", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({image})});
+          const data = await response.json();
+          if (response.status === 401) window.dispatchEvent(new Event("owner-session-expired"));
+          if (!response.ok) throw new Error(data.error ?? "Image upload failed.");
+          results.push(data.image);
+        }
       }
       onChange(multiple ? [...images, ...results] : results);
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Unable to read image."); }

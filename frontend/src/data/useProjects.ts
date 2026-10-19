@@ -14,7 +14,7 @@ export function useProjects() {
       pending = true;
       try {
         const response = await fetch(
-          `${import.meta.env.BASE_URL}projects.json`,
+          import.meta.env.DEV ? `${import.meta.env.BASE_URL}projects.json` : "/api/content?kind=projects",
           { cache: "no-store", signal: controller.signal },
         );
         if (!response.ok) throw new Error("Failed to load projects");

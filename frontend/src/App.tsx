@@ -4,9 +4,7 @@ import About from "./components/About";
 import Projects from "./components/Projects";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useProjects } from "./data/useProjects";
-const ProjectManager = import.meta.env.DEV
-  ? lazy(() => import("./components/ProjectManager"))
-  : null;
+const ProjectManager = lazy(() => import("./components/ProjectManager"));
 
 function App() {
   const { projects, loading, error } = useProjects();
@@ -16,7 +14,7 @@ function App() {
     window.addEventListener("hashchange", update);
     return () => window.removeEventListener("hashchange", update);
   }, []);
-  if (ProjectManager && hash === "#manage-projects") {
+  if (hash === "#manage-projects" || hash === "#admin") {
     return (
       <Suspense
         fallback={

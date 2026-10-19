@@ -3,7 +3,7 @@ function About() {
   const [image, setImage] = useState("/profile.png");
   const [backgroundImage, setBackgroundImage] = useState("/profile.png");
   useEffect(() => {
-    const load = () => { fetch("/profile.json", {cache:"no-store"}).then(r => r.json()).then(d => { setImage(d.image || "/profile.png"); setBackgroundImage(d.backgroundImage || "/profile.png"); }).catch(() => {}); };
+    const load = () => { fetch(import.meta.env.DEV ? "/profile.json" : "/api/content?kind=profile", {cache:"no-store"}).then(r => r.json()).then(d => { setImage(d.image || "/profile.png"); setBackgroundImage(d.backgroundImage || "/profile.png"); }).catch(() => {}); };
     load(); window.addEventListener("focus", load); window.addEventListener("portfolio-profile-updated", load);
     return () => { window.removeEventListener("focus", load); window.removeEventListener("portfolio-profile-updated", load); };
   }, []);

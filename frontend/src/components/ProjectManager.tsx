@@ -95,9 +95,7 @@ function ProjectEditor() {
       <nav className="studio-navigation" aria-label="Dashboard sections"><button type="button" className="button" onClick={() => document.getElementById("manage-images")?.scrollIntoView()}>Profile & background pictures ↓</button><button type="button" className="button" onClick={() => document.getElementById("manage-work")?.scrollIntoView()}>Projects & project pictures ↓</button></nav>
       <ProfileEditor />
       <p>
-        Add your own work. Saves update the local website and persist after
-        restarting. Deploy the updated content to publish it on your hosted
-        website.
+        {import.meta.env.DEV ? "You are editing local files. Push your changes to publish them. Online edits are stored separately in the hosted database." : "Manage your live portfolio here. Saved changes publish immediately and persist across deployments. Images upload to your portfolio storage."}
       </p>
       <p role="alert" className="form-error">
         {error}
@@ -134,7 +132,7 @@ function ProjectEditor() {
                           row.id === entry.id ? entry : row,
                         )
                       : [...projects, entry],
-                    "Project saved. Your local portfolio is updated.",
+                    "Project saved. Your portfolio is updated.",
                   )
                 }
               />

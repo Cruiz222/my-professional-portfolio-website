@@ -103,7 +103,7 @@ export function parseProjects(value: unknown): Project[] {
 
 export function parseImage(value: unknown): string {
   if (typeof value !== "string" || value.length > 700000 ||
-      !(value === "/profile.png" || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(value)))
+      !(value === "/profile.png" || /^https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/portfolio-images\/[a-f0-9-]{36}\.jpg$/.test(value) || /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/]+=*$/.test(value)))
     throw new Error("Choose a PNG, JPEG or WebP image under 500 KB after resizing.");
   return value;
 }

@@ -1,3 +1,9 @@
+# CruizTech portfolio
+
+React + TypeScript portfolio with local editing and hosted Vercel/Supabase administration.
+
+For online admin installation and deployment, read [HOSTED-ADMIN.md](HOSTED-ADMIN.md). This supersedes the localhost-only publishing instructions below. Online content lives in Supabase; local development edits remain file-backed.
+
 # John Abah — portfolio frontend
 
 React and TypeScript portfolio with file-backed project content. No sample projects are published.
