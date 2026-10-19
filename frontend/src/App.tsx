@@ -133,7 +133,6 @@ function App() {
           JA<span>.</span>
         </a>
         <p>John Abah · Built with curiosity and care.</p>
-        {import.meta.env.DEV && <a href="#manage-projects">Owner login</a>}
         <a href="#about">Back to top ↑</a>
       </footer>
     </>

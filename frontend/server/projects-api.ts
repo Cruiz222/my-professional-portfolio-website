@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { readFile, rename, unlink, writeFile } from "node:fs/promises";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { parseProjects } from "../src/data/projects.ts";
+import { parseProjects, parseProfile } from "../src/data/projects.ts";
 
 import { createOwnerAuth } from "./owner-auth.ts";
 
@@ -21,8 +21,11 @@ export function createProjectsApi(
     next: () => void,
   ) => {
     const route = request.url?.split("?")[0];
+    const profileRoute = route === "/api/profile";
+    const contentFile = profileRoute ? filename.replace(/projects\.json$/, "profile.json") : filename;
+    const parse = profileRoute ? parseProfile : parseProjects;
     const sessionRoute = route === "/api/owner/session";
-    if (route !== "/api/projects" && !sessionRoute) return next();
+    if (route !== "/api/projects" && !sessionRoute && !profileRoute) return next();
     const send = (status: number, data: unknown) => {
       response.writeHead(status, {
         "Content-Type": "application/json",
@@ -68,9 +71,9 @@ export function createProjectsApi(
           return;
         }
         if (request.method === "GET") {
-          const raw = await readFile(filename, "utf8");
+          const raw = await readFile(contentFile, "utf8");
           send(200, {
-            projects: parseProjects(JSON.parse(raw)),
+            projects: parse(JSON.parse(raw)),
             revision: revision(raw),
           });
           return;
@@ -79,7 +82,7 @@ export function createProjectsApi(
         let size = 0;
         for await (const chunk of request) {
           size += Buffer.byteLength(chunk);
-          if (size > 256 * 1024) {
+          if (size > 8 * 1024 * 1024) {
             send(413, { error: "Project data is too large." });
             return;
           }
@@ -87,7 +90,7 @@ export function createProjectsApi(
         }
         let projects;
         try {
-          projects = parseProjects(
+          projects = parse(
             JSON.parse(Buffer.concat(chunks).toString("utf8")),
           );
         } catch (error) {
@@ -105,7 +108,7 @@ export function createProjectsApi(
             });
             return;
           }
-          const raw = await readFile(filename, "utf8");
+          const raw = await readFile(contentFile, "utf8");
           if (request.headers["if-match"] !== revision(raw)) {
             send(409, {
               error:
@@ -114,10 +117,10 @@ export function createProjectsApi(
             return;
           }
           const data = JSON.stringify(projects, null, 2) + "\n";
-          const temporary = `${filename}.${randomUUID()}.tmp`;
+          const temporary = `${contentFile}.${randomUUID()}.tmp`;
           try {
             await writeFile(temporary, data, { flag: "wx" });
-            await rename(temporary, filename);
+            await rename(temporary, contentFile);
           } finally {
             await unlink(temporary).catch(() => {});
           }

@@ -3,7 +3,7 @@ import type { Project } from "../data/projects";
 function ProjectCard({ project }: { project: Project }) {
   return (
     <li className="project-card">
-      <div className="project-visual" aria-hidden="true">
+      {project.images?.length ? <div className="project-gallery">{project.images.map((src, i) => <img key={i} src={src} alt={`${project.title} — image ${i + 1}`} loading="lazy" />)}</div> : <div className="project-visual" aria-hidden="true">
         <span className="project-code">{project.category}</span>
         <span className="project-glyph">
           {project.title.slice(0, 1).toUpperCase()}
@@ -13,6 +13,7 @@ function ProjectCard({ project }: { project: Project }) {
           {project.technologies.join(" / ")}
         </span>
       </div>
+      }
       <div className="project-body">
         <p className="eyebrow">{project.contribution}</p>
         <h3>{project.title}</h3>

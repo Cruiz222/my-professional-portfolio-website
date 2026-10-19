@@ -1,6 +1,14 @@
+import { useEffect, useState } from "react";
 function About() {
+  const [image, setImage] = useState("/profile.png");
+  useEffect(() => {
+    const load = () => { fetch("/profile.json", {cache:"no-store"}).then(r => r.json()).then(d => setImage(d.image || "/profile.png")).catch(() => {}); };
+    load(); window.addEventListener("focus", load); window.addEventListener("portfolio-profile-updated", load);
+    return () => { window.removeEventListener("focus", load); window.removeEventListener("portfolio-profile-updated", load); };
+  }, []);
   return (
     <section id="about" className="hero section">
+      <img className="portrait-backdrop" src={image} alt="" aria-hidden="true" />
       <div>
         <p className="eyebrow">John Abah / Engineering portfolio</p>
         <h1>
@@ -23,7 +31,8 @@ function About() {
           </a>
         </div>
       </div>
-      <div className="engineering-panel">
+      <div className="engineering-panel portrait-panel">
+        <img className="floating-portrait" src={image} alt="John Abah at work" />
         <div className="panel-top">
           <span className="live-dot" /> Always learning <span>/ 001</span>
         </div>

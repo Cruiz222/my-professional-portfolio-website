@@ -1,3 +1,4 @@
+import ImagePicker from "./ImagePicker";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { categories, contributions, parseProjects } from "../data/projects";
@@ -26,6 +27,7 @@ function ProjectForm({ project, saving, onSave, onCancel }: Props) {
     project?.repositoryUrl ?? "",
   );
   const [demoUrl, setDemoUrl] = useState(project?.demoUrl ?? "");
+  const [images, setImages] = useState<string[]>(project?.images ?? []);
   const [error, setError] = useState("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -45,6 +47,7 @@ function ProjectForm({ project, saving, onSave, onCancel }: Props) {
             .filter(Boolean),
           repositoryUrl,
           demoUrl,
+          images,
         },
       ]);
       await onSave(entry);
@@ -59,6 +62,7 @@ function ProjectForm({ project, saving, onSave, onCancel }: Props) {
     <form className="project-editor" onSubmit={handleSubmit}>
       <h2>{project ? "Edit project" : "Add project"}</h2>
       <fieldset disabled={saving}>
+        <ImagePicker images={images} onChange={setImages} multiple />
         <label htmlFor="project-title">Project title</label>
         <input
           id="project-title"
@@ -103,10 +107,11 @@ function ProjectForm({ project, saving, onSave, onCancel }: Props) {
         <label htmlFor="project-technologies">
           Technologies (comma-separated, optional)
         </label>
-        <input
+        <textarea
           id="project-technologies"
           value={technologies}
-          maxLength={820}
+          rows={2}
+          placeholder="Python, React, PostgreSQL…"
           onChange={(event) => setTechnologies(event.target.value)}
         />
         <label htmlFor="project-repository">Repository URL (optional)</label>

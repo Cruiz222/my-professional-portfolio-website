@@ -64,3 +64,7 @@ Learning exercise: trace a field from form state through validation, the save re
 `npm test` covers validation, persistent add/edit/delete operations, invalid and unsafe input, origin/host restrictions, concurrent-edit conflicts, unauthenticated/forged-session rejection, login rate limits, logout, and session expiry. Tests use temporary files and never modify your portfolio content.
 
 Browser checks: add a project, edit it, reload, cancel and confirm deletion, filter categories, and test keyboard navigation and mobile layouts. Contact functionality, real profile links, and earned credentials remain separate work.
+
+
+## Portfolio studio update
+Run `npm ci` then `npm run dev` from `frontend`. Set up owner access with `npm run owner:setup` and restart Vite. Visit `http://localhost:5173/#manage-projects`. Profile images are saved in `public/profile.json`; project galleries are saved in `public/projects.json`. Upload JPEG, PNG or WebP images (up to six per project). The browser resizes images before saving; the first gallery picture is the cover. Swipe/scroll horizontally to browse project pictures. Profile and project data persist on disk. Rebuild and redeploy to publish updates. Owner editing remains localhost-only. Keep your existing `.env.local` when copying this update.

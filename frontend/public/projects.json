@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "31df4e7d-8969-4266-9878-7795098baf69",
+    "title": "Budget-Manager",
+    "description": "Budget Manager combines payment automation with enforced financial discipline. It turns financial plans into scheduled actions while restricting access to committed funds until agreed release conditions are met. Individuals and families can protect rent, school fees and savings goals, release allowances gradually, and automate recurring support. Freelancers can organize irregular income, while businesses can group and schedule salaries, contractor payments and other obligations—with clear funding choices and recorded transaction outcomes.",
+    "technologies": [
+      "Backend:\tPython + FastAPI\nApplication server:\tUvicorn\nFrontend:\tHTML",
+      "CSS and JavaScript\nTemplates:\tJinja2\nDatabase:\tSQLite\nPayments:\tPaystack API\nHTTP client:\tHTTPX\nToken verification:\tPyJWT with cryptography\nDeployment:\tDocker + Docker Compose\nHTTPS and routing:\tCaddy\nHosting:\tAWS Ubuntu server\nAutomation\tCron + Python workers"
+    ],
+    "category": "Software",
+    "contribution": "Personal project",
+    "repositoryUrl": "https://github.com/Cruiz222/budget-Manager.git",
+    "demoUrl": "https://budget-manager.duckdns.org",
+    "images": []
+  }
+]

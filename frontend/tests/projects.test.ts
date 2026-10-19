@@ -4,7 +4,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer, get } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseProjects } from "../src/data/projects.ts";
+import { parseProjects, parseProfile } from "../src/data/projects.ts";
 import { createProjectsApi } from "../server/projects-api.ts";
 import { hashPassword } from "../server/owner-auth.ts";
 
@@ -90,6 +90,15 @@ test("local API persists additions, edits and deletions; rejects unsafe and stal
       },
       body: JSON.stringify(rows),
     });
+  await writeFile(join(directory, "profile.json"), JSON.stringify({image:"/profile.png"}));
+  assert.equal((await fetch(`${base}/api/profile`)).status, 401);
+  const profile = await (await fetch(`${base}/api/profile`, {headers:{Cookie:cookie}})).json();
+  const portrait = "data:image/jpeg;base64,/9j/";
+  const saveProfile = (image: string, revision: string) => fetch(`${base}/api/profile`, {method:"PUT", headers:{Cookie:cookie, Origin:base, "Content-Type":"application/json", "If-Match":revision}, body:JSON.stringify({image})});
+  assert.equal((await saveProfile(portrait, profile.revision)).status, 200);
+  assert.equal(JSON.parse(await readFile(join(directory, "profile.json"), "utf8")).image, portrait);
+  assert.equal((await saveProfile(portrait, profile.revision)).status, 409);
+  assert.equal((await saveProfile("data:image/svg+xml;base64,AAAA", profile.revision)).status, 400);
   const initial = await load();
   assert.deepEqual(initial.projects, []);
   assert.equal(
@@ -248,3 +257,19 @@ for (const configured of [false, true]) {
     );
   });
 }
+
+test("image validation preserves galleries and blocks unsafe image formats", () => {
+ const image = "data:image/jpeg;base64,/9j/";
+ assert.deepEqual(parseProjects([{...project, images:[image]}])[0].images, [image]);
+ assert.deepEqual(parseProfile({image:"/profile.png"}), {image:"/profile.png"});
+ for (const image of ["javascript:alert(1)", "data:image/svg+xml;base64,AAAA", "https://example.com/a.jpg", "data:image/png;base64," + "A".repeat(700001)]) {
+  assert.throws(() => parseProfile({image}));
+  assert.throws(() => parseProjects([{...project, images:[image]}]));
+ }
+ assert.throws(() => parseProjects([{...project, images:Array(7).fill(image)}]));
+});
+
+test("technology field accepts long names and more than twenty entries", () => {
+ const technologies = Array.from({length: 45}, (_, i) => `Custom technology ${i} ${"x".repeat(100)}`);
+ assert.deepEqual(parseProjects([{...project, technologies}])[0].technologies, technologies);
+});
