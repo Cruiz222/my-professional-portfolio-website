@@ -1,4 +1,4 @@
-import {handler, load, send, HttpError} from "../server/cloud.ts";
+import {handler, load, send, HttpError} from "../server/runtime/cloud.mjs";
 export default handler(async (req,res)=> {
  if (req.method !== "GET") throw new HttpError(405,"Method not allowed.");
  const kind = new URL(req.url!,"https://portfolio.invalid").searchParams.get("kind");

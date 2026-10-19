@@ -1,2 +1,2 @@
-import {handler, session} from "../../server/cloud.ts";
+import {handler, session} from "../../server/runtime/cloud.mjs";
 export default handler(session);

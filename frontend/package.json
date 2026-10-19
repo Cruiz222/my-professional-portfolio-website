@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/build-server.mjs && tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test": "node scripts/build-server.mjs && node --experimental-strip-types --test tests/*.test.ts && node scripts/check-runtime.mjs",
     "owner:setup": "node scripts/setup-owner.mjs"
   },
   "dependencies": {

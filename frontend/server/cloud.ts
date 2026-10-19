@@ -1,6 +1,5 @@
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { join } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { parseProjects, parseProfile } from "../src/data/projects.ts";
 export type Request = IncomingMessage & { body?: unknown };
@@ -72,7 +71,8 @@ export async function load(kind: Kind) {
   if (rows.length) return {projects: kind === "projects" ? parseProjects(rows[0].data) : parseProfile(rows[0].data), revision:rows[0].revision};
  }
  // Existing committed content remains visible until its first online save.
- const raw = await readFile(join(process.cwd(),"public",`${kind}.json`),"utf8");
+ const publicDirectory = new URL(import.meta.url.endsWith("/runtime/cloud.mjs") ? "../../public/" : "../public/", import.meta.url);
+ const raw = await readFile(new URL(`${kind}.json`, publicDirectory),"utf8");
  return {projects:kind === "projects" ? parseProjects(JSON.parse(raw)) : parseProfile(JSON.parse(raw)), revision:"initial"};
 }
 export async function content(req: Request,res: Response,kind: Kind) {

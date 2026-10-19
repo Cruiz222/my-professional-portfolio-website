@@ -1,6 +1,6 @@
 import {randomUUID} from "node:crypto";
-import {handler, sameOrigin, requireOwner, body, send, HttpError} from "../server/cloud.ts";
-import {parseImage} from "../src/data/projects.ts";
+import {handler, sameOrigin, requireOwner, body, send, HttpError} from "../server/runtime/cloud.mjs";
+import {parseImage} from "../server/runtime/projects.mjs";
 export default handler(async(req,res)=> {
  if (req.method !== "POST") throw new HttpError(405,"Method not allowed.");
  sameOrigin(req); await requireOwner(req);

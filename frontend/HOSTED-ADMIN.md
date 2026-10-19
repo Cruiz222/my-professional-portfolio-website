@@ -77,3 +77,7 @@ If the dashboard says setup is incomplete, check all four Production variables a
 ## Validation performed
 
 The build type-checks server functions and client code. Automated tests cover the original local editor plus hosted login, secure cookies, stored sessions, expiration, logout, forged sessions, cross-origin rejection, persistent saves, revision conflicts, public reads, image upload validation, and fail-closed configuration. Hosted tests mock Supabase; actual SQL installation and Vercel/Supabase integration must still be verified after your account setup.
+
+
+## Vercel runtime packaging
+The API entrypoints import committed JavaScript modules in `server/runtime/`. These are regenerated from the TypeScript sources by `scripts/build-server.mjs` on builds and tests. Commit both sources and generated modules. Hosted integration tests execute these generated modules, so runtime imports are checked without relying on Node TypeScript support.

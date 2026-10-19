@@ -3,7 +3,7 @@ import {test} from "node:test";
 import {createServer} from "node:http";
 import {createHash} from "node:crypto";
 import {hashPassword} from "../server/owner-auth.ts";
-import {handler,session,content,load,send} from "../server/cloud.ts";
+import {handler,session,content,load,send} from "../server/runtime/cloud.mjs";
 import media from "../api/media.ts";
 
 test("hosted admin persists sessions and content, rejects forged cookies, CSRF and stale saves",async(t)=> {
