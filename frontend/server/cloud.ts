@@ -88,5 +88,20 @@ export async function content(req: Request,res: Response,kind: Kind) {
  send(res,200,{projects:value,revision:result});
 }
 export function handler(action: (req: Request,res: Response)=>Promise<unknown>) {
- return async (req: Request,res: Response) => { try {await action(req,res);} catch(e) {send(res,e instanceof HttpError ? e.status : 500,{error:e instanceof HttpError ? e.message : "Unable to complete this request. Please try again."});} };
+ return async (req: Request,res: Response) => {
+  try {
+   await action(req,res);
+  } catch(e) {
+   if (!(e instanceof HttpError)) {
+    console.error(
+     "[portfolio-api] Unexpected API exception:",
+     e instanceof Error ? e.stack : typeof e
+    );
+   }
+
+   send(res,e instanceof HttpError ? e.status : 500,{
+    error:e instanceof HttpError ? e.message : "Unable to complete this request. Please try again."
+   });
+  }
+ };
 }
