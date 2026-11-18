@@ -92,20 +92,6 @@ export function handler(action: (req: Request,res: Response)=>Promise<unknown>) 
   try {
    await action(req,res);
   } catch(e) {
-   if (!(e instanceof HttpError)) {
-    const cause = e instanceof Error ? e.cause : undefined;
-
-    console.error("[portfolio-api] Unexpected API exception:", {
-     name: e instanceof Error ? e.name : typeof e,
-     message: e instanceof Error ? e.message : String(e),
-     cause: cause instanceof Error ? {
-      name: cause.name,
-      message: cause.message,
-      code: "code" in cause ? cause.code : undefined
-     } : cause
-    });
-   }
-
    send(res,e instanceof HttpError ? e.status : 500,{
     error:e instanceof HttpError ? e.message : "Unable to complete this request. Please try again."
    });
